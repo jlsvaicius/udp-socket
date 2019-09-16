@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "outDir": "lib",
+    "allowJs": false,
+    "target": "esnext",
+    "experimentalDecorators": false,
+    "typeRoots": [
+      "./node_modules/@types"
+    ],
+    "noImplicitAny": true,
+    "noImplicitReturns": true
+  },
+  "include": [
+    "./src/**/*"
+  ],
+  "exclude": [
+    "tests",
+    "node_modules",
+    "lib"
+  ]
+}

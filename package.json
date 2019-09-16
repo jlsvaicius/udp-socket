@@ -1,0 +1,31 @@
+{
+  "name": "udp-api-client",
+  "private": true,
+  "version": "0.1.0",
+  "description": "client to communicate via UDP protocol to arduino device",
+  "main": "lib/udp-client.js",
+  "directories": {
+    "test": "tests"
+  },
+  "dependencies": {
+    "@types/aes-js": "^3.1.0",
+    "aes-js": "^3.1.2",
+    "crypto-js": "^3.1.9-1",
+    "jest": "^23.5.0",
+    "typescript": "^3.0.1"
+  },
+  "devDependencies": {
+    "@types/crypto-js": "^3.1.43",
+    "@types/node": "^10.7.1"
+  },
+  "scripts": {
+    "test": "tsc && jest --config=jest.config.json",
+    "build": "tsc"
+  },
+  "keywords": [
+    "nodejs",
+    "udp"
+  ],
+  "author": "Julius Vaičius",
+  "license": "ISC"
+}
