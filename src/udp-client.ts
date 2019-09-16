@@ -53,13 +53,13 @@ export class UdpApiClient {
         return this.sendMessage(msg, port, address);
     }
     startCharging(id: string, port: number, address: string) {
-        const msg = `OPEN_ID_ ${id}`;
+        const msg = `START_ID_${id}`;
 
         return this.sendMessage(msg, port, address);
     }
 
     stopCharging(id: string, port: number, address: string) {
-        const msg = `CLOSE_ID ${id}`;
+        const msg = `STOP_ID_${id}`;
 
         return this.sendMessage(msg, port, address);
     }
@@ -83,7 +83,7 @@ export class UdpApiClient {
 
         const encryptedBytes = utils.hex.toBytes(message);
         const aesCbc = new ModeOfOperation.cbc(key_128_buffer, iv_buffer);
-        
+
         const decryptedBytes = aesCbc.decrypt(encryptedBytes);
         const unpadded_data = padding.pkcs7.strip(decryptedBytes)
     
