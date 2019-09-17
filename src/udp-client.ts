@@ -64,29 +64,24 @@ export class UdpApiClient {
         return this.sendMessage(msg, port, address);
     }
 
-    protected encrypt(message: string): string {
+    protected encrypt(message: string): Uint8Array {
         const key_128_buffer = Buffer.from(this.key_128);
         const iv_buffer = Buffer.from(this.iv);
 
         const textBytes = utils.utf8.toBytes(message);
-        const padded_data = padding.pkcs7.pad(textBytes)
-
+        const padded_data = padding.pkcs7.pad(textBytes);
         const aesCbc = new ModeOfOperation.cbc(key_128_buffer, iv_buffer);
-        const encryptedBytes = aesCbc.encrypt(padded_data);
-
-        return utils.hex.fromBytes(encryptedBytes);
+        return aesCbc.encrypt(padded_data);
     }
 
-    protected decrypt(message: string) {
+    protected decrypt(message: Buffer): string {
         const key_128_buffer = Buffer.from(this.key_128);
         const iv_buffer = Buffer.from(this.iv);
 
-        const encryptedBytes = utils.hex.toBytes(message);
         const aesCbc = new ModeOfOperation.cbc(key_128_buffer, iv_buffer);
+        const decryptedBytes = aesCbc.decrypt(message);
+        const unpadded_data = padding.pkcs7.strip(decryptedBytes);
 
-        const decryptedBytes = aesCbc.decrypt(encryptedBytes);
-        const unpadded_data = padding.pkcs7.strip(decryptedBytes)
-    
         return utils.utf8.fromBytes(unpadded_data);
     }
 
@@ -117,8 +112,14 @@ export class UdpApiClient {
             client.once('error', rejectClose);
             client.once('close', () => intervalHandle.unref());
             client.once('message',(msg: Buffer, {port, address}: AddressInfo) => {
-                const res = this.decrypt(msg.toString());
-                const [ns, sig, code] = res.split(' ');
+                const res = this.decrypt(msg);
+                const [
+                    command,
+                    idName, 
+                    id, 
+                    timestamp, 
+                    code
+                ] = res.split('_');
 
                 this.logger.log('INFO', `S2C ${res} ${address}:${port}`);
 
@@ -128,18 +129,18 @@ export class UdpApiClient {
                     return rejectClose(new Error(`${errMsg}`));
                 }
 
-                const ackMsg = `ACK ${sig}`;
-                const req = this.encrypt(ackMsg);
-                this.logger.log('INFO', `C2S ${msg} ${address}:${port}`);
-                client.send(req, port, address, (err: Error) => {
+                // const ackMsg = `ACK ${sig}`;
+                // const req = this.encrypt(ackMsg);
+                // this.logger.log('INFO', `C2S ${msg} ${address}:${port}`);
+                // client.send(req, port, address, (err: Error) => {
                     client.close(() => {
-                        if (!err) {
+                        // if (!err) {
                             resolve(res);
-                        } else {
-                            reject(new Error('Failed to send ACK msg to the server'));
-                        }
+                        // } else {
+                        //     reject(new Error('Failed to send ACK msg to the server'));
+                        // }
                     });
-                });
+                // });
             });
 
             this.logger.log('INFO', `C2S ${msg} ${address}:${port}`);
