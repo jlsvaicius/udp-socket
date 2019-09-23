@@ -128,15 +128,6 @@ export class UdpApiClient {
 
                     return rejectClose(new Error(`${errMsg}`));
                 }
-                console.log('safety timestampt ' + timestamp)
-                const currentTime = Math.floor(Date.now() / 1000);
-                console.log('currrent timestampt ' + currentTime)
-                if (parseInt(timestamp) >= currentTime - 3) {
-                    const errMsg = 'Safety error';
-                    const json = Buffer.from(this.encrypt(JSON.stringify({error: 0})));
-                    client.send(json, port, address, (err: Error) => err && rejectClose(err));
-                    return rejectClose(new Error(`${errMsg}`));
-                }
 
                 // const ackMsg = `ACK ${sig}`;
                 // const req = this.encrypt(ackMsg);
