@@ -30,10 +30,8 @@ export class UdpApiClient {
         public timeoutDuration = 5000,
         public retryCount: number = 5,
         public logger?: Logger,
-        // public key_128: number[] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
-        // public iv: number[] = [ 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34,35, 36 ]
-        public key_128: string = '5b1203bcac4a85612c8f998d54a7354d',
-        public iv: string = '56d7a19850612f5568e898af19a40617'
+        public key_128: number[] = [2, 51, 9, 12, 1, 85, 27, 56, 10, 14, 75, 42, 78, 4, 23, 64],
+        public iv: number[] = [29, 78, 23, 33, 99, 13, 68, 23, 94, 38, 65, 12, 45, 7, 49, 68]
     ) {
         this.logger = logger || noopLogger;
     }
@@ -67,8 +65,8 @@ export class UdpApiClient {
     }
 
     protected encrypt(message: string): Uint8Array {
-        const key_128_buffer = Buffer.from(this.key_128, 'hex');
-        const iv_buffer = Buffer.from(this.iv, 'hex');
+        const key_128_buffer = Buffer.from(this.key_128);
+        const iv_buffer = Buffer.from(this.iv);
 
         const textBytes = utils.utf8.toBytes(message);
         const padded_data = padding.pkcs7.pad(textBytes);
@@ -77,8 +75,8 @@ export class UdpApiClient {
     }
 
     protected decrypt(message: Buffer): string {
-        const key_128_buffer = Buffer.from(this.key_128, 'hex');
-        const iv_buffer = Buffer.from(this.iv, 'hex');
+        const key_128_buffer = Buffer.from(this.key_128);
+        const iv_buffer = Buffer.from(this.iv);
 
         const aesCbc = new ModeOfOperation.cbc(key_128_buffer, iv_buffer);
         const decryptedBytes = aesCbc.decrypt(message);
