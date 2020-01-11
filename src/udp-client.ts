@@ -1,7 +1,6 @@
-import {createSocket, Socket} from "dgram";
-import {setInterval} from "timers";
-import {AddressInfo} from "net";
-// import {AES, enc} from "crypto-js";
+import { createSocket } from "dgram";
+import { setInterval } from "timers";
+import { AddressInfo } from "net";
 import { padding, utils, ModeOfOperation } from "aes-js";
 
 interface Signer {
@@ -95,22 +94,22 @@ export class UdpApiClient {
                 client.close();
                 reject(err);
             };
-            const intervalHandle = setInterval((state: any) => {
-                if (state.done) {
-                    return;
-                }
+            // const intervalHandle = setInterval((state: any) => {
+            //     if (state.done) {
+            //         return;
+            //     }
 
-                if (++state.attempt > this.retryCount) {
-                    state.done = true;
+            //     if (++state.attempt > this.retryCount) {
+            //         state.done = true;
 
-                    return rejectClose(new Error(`API did not respond after ${this.retryCount} retries`));
-                }
+            //         return rejectClose(new Error(`API did not respond after ${this.retryCount} retries`));
+            //     }
 
-                client.send(message, port, address, (err: Error) => err && rejectClose(err));
-            }, this.timeoutDuration, {attempt: 0, done: false});
+            //     client.send(message, port, address, (err: Error) => err && rejectClose(err));
+            // }, this.timeoutDuration, {attempt: 0, done: false});
 
             client.once('error', rejectClose);
-            client.once('close', () => intervalHandle.unref());
+            // client.once('close', () => intervalHandle.unref());
             client.once('message',(msg: Buffer, {port, address}: AddressInfo) => {
                 const res = this.decrypt(msg);
                 const [
