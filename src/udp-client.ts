@@ -108,7 +108,7 @@ export class UdpApiClient {
             //     client.send(message, port, address, (err: Error) => err && rejectClose(err));
             // }, this.timeoutDuration, {attempt: 0, done: false});
 
-            client.once('error', rejectClose);
+            client.once('error', () => client.close());
             // client.once('close', () => intervalHandle.unref());
             client.once('message',(msg: Buffer, {port, address}: AddressInfo) => {
                 const res = this.decrypt(msg);
