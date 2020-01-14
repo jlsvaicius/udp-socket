@@ -123,9 +123,15 @@ export class UdpApiClient {
                 this.logger.log('INFO', `S2C ${res} ${address}:${port}`);
 
                 if (code !== 'OK'){
-                    const errMsg = this.serverErrByCode[code] || 'Unknown server error returned';
-
-                    return rejectClose(new Error(`${errMsg}`));
+                    if (code === 'NOA') {
+                        if (command !== 'STOP') {
+                            const errMsg = this.serverErrByCode[code] || 'Unknown server error returned';
+                            return rejectClose(new Error(`${errMsg}`));
+                        }
+                    } else {
+                        const errMsg = this.serverErrByCode[code] || 'Unknown server error returned';
+                        return rejectClose(new Error(`${errMsg}`));
+                    }
                 }
 
                 // const ackMsg = `ACK ${sig}`;
